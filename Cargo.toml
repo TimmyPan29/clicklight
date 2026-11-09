@@ -1,0 +1,32 @@
+[package]
+name = "clicklight"
+version = "0.1.0"
+edition = "2021"
+description = "ClickLight for Windows: left-click ripple + hotkey-activated rectangular fade pen (three-finger drag friendly)"
+license = "MIT"
+
+[dependencies]
+tiny-skia = { version = "0.11", default-features = false, features = ["std", "simd"] }
+fontdue = "0.9"
+serde = { version = "1", features = ["derive"] }
+toml = { version = "0.8", default-features = false, features = ["parse"] }
+
+[dependencies.windows-sys]
+version = "0.59"
+features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Gdi",
+  "Win32_Security",
+  "Win32_System_LibraryLoader",
+  "Win32_System_Threading",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_WindowsAndMessaging",
+]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
