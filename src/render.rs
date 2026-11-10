@@ -152,7 +152,7 @@ impl RectStroke {
     }
 }
 
-pub fn draw_rect(pm: &mut PixmapMut, r: &RectStroke, st: &RectStyle, now: Instant, active: bool) {
+pub fn draw_rect(pm: &mut PixmapMut, r: &RectStroke, st: &RectStyle, now: Instant, _active: bool) {
     let al = r.alpha(st, now);
     if al <= 0.0 {
         return;
@@ -168,17 +168,6 @@ pub fn draw_rect(pm: &mut PixmapMut, r: &RectStroke, st: &RectStyle, now: Instan
     stroke(pm, &path, c, 0.28 * al, sw * 2.4); // inner glow
     stroke(pm, &path, c, 0.95 * al, sw); // neon body
     stroke(pm, &path, lighten(c, 0.75), 0.90 * al, (sw * 0.35).max(1.0)); // hot core
-
-    if active {
-        for (cx, cy) in [(x0, y0), (x1, y0), (x0, y1), (x1, y1)] {
-            if let Some(d) = PathBuilder::from_circle(cx, cy, sw + 2.5) {
-                fill(pm, &d, c, 0.95);
-            }
-            if let Some(d) = PathBuilder::from_circle(cx, cy, (sw * 0.6).max(1.5)) {
-                fill(pm, &d, (255, 255, 255), 1.0);
-            }
-        }
-    }
 }
 
 // ---------------------------------------------------------------- HUD
