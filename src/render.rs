@@ -58,6 +58,13 @@ pub fn rounded_rect(x0: f32, y0: f32, x1: f32, y1: f32, r: f32) -> Option<Path> 
 
 // ---------------------------------------------------------------- ripple
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum RippleKind {
+    Left,
+    Right,
+    Middle,
+}
+
 pub struct Ripple {
     pub x: f32,
     pub y: f32,
@@ -65,6 +72,7 @@ pub struct Ripple {
     pub dur: Duration,
     pub size: f32,
     pub color: Rgb,
+    pub kind: RippleKind,
 }
 
 impl Ripple {
@@ -100,6 +108,18 @@ pub fn draw_ripple(pm: &mut PixmapMut, r: &Ripple, now: Instant) {
     // spark core
     if let Some(c) = PathBuilder::from_circle(r.x, r.y, (bs * 0.10 * (1.0 - p)).max(1.5)) {
         fill(pm, &c, (255, 255, 255), fade * 0.95);
+    }
+    // right click crosshair
+    if r.kind == RippleKind::Right {
+        let ch = bs * (0.16 + 0.08 * fade);
+        let mut pb = PathBuilder::new();
+        pb.move_to(r.x - ch, r.y);
+        pb.line_to(r.x + ch, r.y);
+        pb.move_to(r.x, r.y - ch);
+        pb.line_to(r.x, r.y + ch);
+        if let Some(path) = pb.finish() {
+            stroke(pm, &path, (255, 255, 255), fade * 0.75, 1.5);
+        }
     }
 }
 

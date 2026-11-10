@@ -20,7 +20,8 @@ clear             = "Ctrl+Alt+Shift+D"   # wipe all rectangles immediately
 quit              = ""                   # exit ClickLight
 
 [ripple]
-# Normal mode: left-click shows a ripple, dragging draws nothing.
+# Normal mode: left-click shows a wavelet ripple, dragging draws nothing.
+# Clicks are 100% passive and never blocked or swallowed.
 enabled     = true
 color       = "#FF2905"
 size        = 42.0
@@ -37,10 +38,6 @@ corner_radius    = 6.0
 fade_delay_ms    = 700     # how long a finished rectangle stays fully visible
 fade_duration_ms = 900     # then fades out over this duration
 min_size         = 6.0     # drags smaller than this (px) count as a click
-# true  : while the pen is on, left button presses are NOT delivered to apps
-#         (drawing over a window won't select text / move icons)
-# false : clicks pass through to the app underneath
-block_clicks     = true
 show_indicator   = true    # small "RECT PEN" badge at top of screen while active
 "##;
 
@@ -98,7 +95,6 @@ pub struct RectPenCfg {
     pub fade_delay_ms: u64,
     pub fade_duration_ms: u64,
     pub min_size: f32,
-    pub block_clicks: bool,
     pub show_indicator: bool,
 }
 
@@ -113,7 +109,6 @@ impl Default for RectPenCfg {
             fade_delay_ms: 700,
             fade_duration_ms: 900,
             min_size: 6.0,
-            block_clicks: true,
             show_indicator: true,
         }
     }
@@ -141,7 +136,6 @@ pub fn ensure_exists(path: &PathBuf) {
     }
 }
 
-/// Returns the config plus an optional error message (on error, defaults are used).
 pub fn load(path: &PathBuf) -> (Config, Option<String>) {
     ensure_exists(path);
     match std::fs::read_to_string(path) {
